@@ -29,6 +29,8 @@ def get_gain(angle):
 
     # Lê arquivo
 df = pd.read_csv('Sel_Cama_PCI320_(900).csv', delimiter=',')
+#df = pd.read_csv('Sel_anap_pci235_(900).csv', delimiter=',')
+#df = pd.read_csv('Sel_Sidro_PCI221_(900).csv', delimiter=',')
 df = df[['Lon', 'Lat','RSRP','Regiao']]   
 #df = pd.read_csv('MComp_HTZ_Cama.csv', delimiter=',')
 dant = pd.read_csv('Antena_cama.csv', delimiter=';')
@@ -59,5 +61,7 @@ df["Ganho"] = Gant
 df=df.sort_values(by=['distancia'])
 
 df.to_csv('Sel_Cama_PCI320_(900)_dis.csv')
+#df.to_csv('Sel_anap_pci235_(900)_dis.csv')
+#df.to_csv('Sel_sid_pci221_(900)_dis.csv')
 
 print("End")
