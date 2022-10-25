@@ -18,6 +18,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 # Lê arquivo
 df = pd.read_csv('Sel_sid_pci221_(900)_dis.csv', delimiter=',')#Sidrolandia
 #df = pd.read_csv('Sel_anap_pci235_(900)_dis.csv', delimiter=',')#Anapolis
+#df = pd.read_csv('Sel_Cama_PCI320_(900)_dis.csv', delimiter=',')#Camaqua
 
 # Define as variaveis de treino
 variaveis=['Lat', 'Lon', 'distancia', 'bearing', 'Ganho']
