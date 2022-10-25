@@ -1,0 +1,111 @@
+import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import KFold
+from sklearn.model_selection import RepeatedKFold
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import AdaBoostRegressor
+from sklearn import neighbors
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+#Carregando dados
+
+import warnings
+warnings.simplefilter(action='ignore', category=UserWarning)
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+# Lê arquivo
+df = pd.read_csv('Sel_sid_pci221_(900)_dis.csv', delimiter=',')#Sidrolandia
+#df = pd.read_csv('Sel_anap_pci235_(900)_dis.csv', delimiter=',')#Anapolis
+
+# Define as variaveis de treino
+variaveis=['Lat', 'Lon', 'distancia', 'bearing', 'Ganho']
+#variaveis=['Lat', 'Lon']
+
+X=df[variaveis]
+y=df['RSRP']
+
+
+#Random Forest
+
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import accuracy_score
+
+espaco_de_parametros = {
+    "n_estimators":[20,100,250,500,1000],
+    "criterion": ['squared_error'],
+    "max_depth": [10,20,50,100,150,200],
+    "min_samples_split": [2,8,16,32,64],
+    "max_features": [2,3]  
+}
+
+busca = GridSearchCV(RandomForestRegressor(),
+                    espaco_de_parametros, 
+                    scoring='neg_root_mean_squared_error',
+                    cv = KFold(n_splits = 5)
+                    )
+busca.fit(X, y)
+resultados = pd.DataFrame(busca.cv_results_)
+resultados.to_csv('rf_results.csv', index=False)
+print(resultados)
+
+
+# Ada Boost
+
+espaco_de_parametros = {
+    "n_estimators":[10,20,50,100,250],
+    "learning_rate": [0.05,0.1,0.2,0.3,0.4,0.5,0.7,0.9,1,1.2,2],
+    "loss":['linear', 'square', 'exponential']
+}
+busca = GridSearchCV(AdaBoostRegressor(),
+                    espaco_de_parametros, 
+                    scoring='neg_root_mean_squared_error',
+                    cv = KFold(n_splits = 5)
+                    )
+
+busca.fit(X, y)
+resultados = pd.DataFrame(busca.cv_results_)
+resultados.to_csv('ab_results.csv', index=False)
+print(resultados)
+
+
+# Decision Tree
+
+
+espaco_de_parametros = {
+    "criterion": ['squared_error'],
+    "splitter": ['best', 'random'],
+    "max_depth": [2,5,10,20,30,50,100,120,150,200],
+    "max_features": ['sqrt', 'log2', 2]
+}
+
+busca = GridSearchCV(DecisionTreeRegressor(),
+                    espaco_de_parametros, 
+                    scoring='neg_root_mean_squared_error',
+                    cv = KFold(n_splits = 5)
+                    )
+
+busca.fit(X, y)
+resultados = pd.DataFrame(busca.cv_results_)
+resultados.to_csv('dt_results.csv', index=False)
+print(resultados)
+
+
+# KNN
+
+espaco_de_parametros = {
+    "n_neighbors": [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,25,30],
+    "p":[1,2]
+}
+
+busca = GridSearchCV(neighbors.KNeighborsRegressor(),
+                    espaco_de_parametros, 
+                    scoring='neg_root_mean_squared_error',
+                    cv = KFold(n_splits = 5)
+                    )
+
+busca.fit(X, y)
+resultados = pd.DataFrame(busca.cv_results_)
+resultados.to_csv('knn_results.csv', index=False)
+print(resultados)
